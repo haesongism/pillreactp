@@ -5,9 +5,8 @@ from .models import Pharmacy
 class PharmacyAdmin(admin.ModelAdmin):
     list_display = (
         "title",
+        "callNumber",
         "address",
-        "callNumber1",
-        "callNumber2",
         "coordinate_X",
         "coordinate_Y",
     )

@@ -42,6 +42,7 @@ CUSTOM_APPS = [
     'comments.apps.CommentsConfig',
     'common.apps.CommonConfig',
     'direct_messages.apps.DirectMessagesConfig',
+    'announcements.apps.AnnouncementsConfig',
 ]
 
 SYSTEM_APPS = [
@@ -92,8 +93,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 

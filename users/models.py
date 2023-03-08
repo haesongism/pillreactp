@@ -32,5 +32,12 @@ class User(AbstractUser):
         max_length= 10,
         choices=GenderChoices.choices,
         )
+    
+    user_medicines = models.ForeignKey(
+        "medicines.Medicine",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
 
     

@@ -2,7 +2,7 @@ from django.db import models
 from common.models import CommonModel
 # 추상화시킨 모델로 해당 모델에서 created_at, updated_at 속성을 가지고 올 수 있다.
 
-class Review(models.Model):
+class Review(CommonModel):
     """ Model Definition for Review """
 
     review_photo = models.ImageField(

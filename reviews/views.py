@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from .models import Review
 # 모든 Review의 정보를 가져와서 출력하기 위해
 
+"""
+templates test code
+
 # Create your views here.
 def see_all_reviews(request):
     # 인자로 request object를 제공해서 정보를 사용할 수 있다.
@@ -47,3 +50,4 @@ def see_one_reviews(request, review_pk):
             'not_found':True,
             },
             )
+"""

@@ -7,19 +7,15 @@ class Pharmacy(CommonModel):
         max_length=100,
     )
 
+    callNumber = models.CharField(
+        verbose_name="연락처",
+        max_length=20,
+        null=True,
+    )
+
     address = models.CharField(
         verbose_name="주소",
         max_length=140,
-    )
-
-    callNumber1 = models.CharField(
-        verbose_name="연락처1",
-        max_length=20,
-    )
-
-    callNumber2 = models.CharField(
-        verbose_name="연락처2",
-        max_length=20,
     )
 
     coordinate_X = models.CharField(
