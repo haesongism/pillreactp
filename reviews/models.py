@@ -13,14 +13,14 @@ class Review(CommonModel):
         "users.User",
         on_delete=models.CASCADE,
         null=False,
-        related_name='review',
+        related_name='reviews',
     )
 
     medicine = models.ForeignKey(
         "medicines.Medicine",
         blank=True,
         on_delete=models.CASCADE,
-        related_name='review',
+        related_name='reviews',
     )
 
     views = models.IntegerField(
