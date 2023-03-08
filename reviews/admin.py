@@ -4,4 +4,14 @@ from .models import Review
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "title",
+        "views",
+        "writer",
+        "medicine",
+        "rating",
+    )
+
+    list_filter = (
+        "rating",
+    )

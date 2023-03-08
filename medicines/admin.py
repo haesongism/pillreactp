@@ -10,6 +10,7 @@ class MedicineAdmin(admin.ModelAdmin):
         "name",
         "basis",
         "cautionOtherMedicines",
+        "rating",
     )
     # admin 패널에 표기할 속성
 

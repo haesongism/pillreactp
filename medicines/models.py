@@ -34,8 +34,20 @@ class Medicine(models.Model):
     # 다른 약과 함께 복용 가능한지의 여부
 
     is_etc = models.BooleanField(
+        verbose_name="전문의약품(True), 일반의약품(False)",
         default=True,
     )
 
+    # 평균 평점을 출력해준다.
+    def rating(self):
+        count = self.reviews.count()
+        if count == 0:
+            return "No Reviews"
+        else:
+            total_rating = 0
+            for review in self.reviews.all().values("rating"):
+                total_rating += review["rating"]
+            return round(total_rating / count, 2)
+    
     def __str__(self) -> str:
         return self.name
