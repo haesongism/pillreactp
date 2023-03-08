@@ -38,6 +38,8 @@ class User(AbstractUser):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
+        related_name='users',
+        # related_name은 FK의 대상이 된 medicines에서 관련된 user에 접근할 때 사용된다.
     )
 
     

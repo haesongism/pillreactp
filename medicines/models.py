@@ -10,14 +10,6 @@ class Medicine(models.Model):
         )
     # 약 이름
 
-    mdPicturePath = models.CharField(
-        max_length=140,
-        verbose_name = "이미지 경로",
-        null=True,
-        blank=True,
-        )
-    # 약 사진 -> 이미지 경로 저장
-
     basis = models.CharField(
         max_length=140,
         verbose_name = "주 성분",
@@ -40,6 +32,10 @@ class Medicine(models.Model):
         help_text="해당 DB를 아직 확인하지 않았기 때문에 default값 임시 저장한 상태."
         )
     # 다른 약과 함께 복용 가능한지의 여부
+
+    is_etc = models.BooleanField(
+        default=True,
+    )
 
     def __str__(self) -> str:
         return self.name

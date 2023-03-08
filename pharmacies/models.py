@@ -1,7 +1,7 @@
 from django.db import models
 from common.models import CommonModel
 
-class Pharmacy(CommonModel):
+class Pharmacy(models.Model):
     title = models.CharField(
         verbose_name="약국명",
         max_length=100,

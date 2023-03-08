@@ -11,3 +11,5 @@ engine = create_engine("mysql+pymysql://root:"+"root"+"@localhost:3306/django?ch
 conn = engine.connect()
 df.to_sql(name = "pharmacies_pharmacy", con=engine, if_exists='replace', index=True, index_label="id")#
 conn.close()
+
+# admin 에서 같이 활용하려면 제공하는 속성과 column의 일체화가 필요하다.
