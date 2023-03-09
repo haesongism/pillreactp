@@ -2,7 +2,8 @@ from .models import Review
 # 모든 Review의 정보를 가져와서 출력하기 위해
 from .serializers import ReviewSerializer
 # 커스텀 번역기 코드 import
-
+from rest_framework.viewsets import ModelViewSet
+# APIView 대체..
 from rest_framework.decorators import api_view
 # rest_framework를 사용하기 위한 데코레이터 세팅
 from rest_framework.response import Response
@@ -10,7 +11,16 @@ from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 
 
-class Reviews(APIView):
+class ReviewViewSet(ModelViewSet):
+    serializer_class = ReviewSerializer
+    queryset = Review.objects.all()
+
+
+
+""" 
+APIView를 활용한 데이터 관리 코드.
+
+    class Reviews(APIView):
     
     def get(self, request):
         all_reviews = Review.objects.all()
@@ -63,4 +73,4 @@ class ReviewDetail(APIView):
 # from django.http import JsonResponse
 # 일반 스트링이 아닌 JsonResponse를 return해야 한다.
 # from django.core import serializers
-# QuerySet을 변환시켜주는 framework
+# QuerySet을 변환시켜주는 framework """
