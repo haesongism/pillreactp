@@ -11,7 +11,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         ("Profile",
             {
-                "fields": ("profile_photo", "username","password","name","email", "gender"),
+                "fields": ("profile_photo", "username","password","name","email", "gender", "user_medicines",),
                             "classes":("wide",),
             },
         ),
@@ -32,3 +32,14 @@ class CustomUserAdmin(UserAdmin):
     list_display = (
         "username", "email","name","is_staff"
     )
+
+    search_fields = (
+        "name",
+        "username",
+        "email",
+        "user_medicines"
+        # = : __exact
+        # ^ : __startswith
+        # nothing : __contain
+    )
+    # 검색창 활성화

@@ -22,7 +22,11 @@ class MedicineAdmin(admin.ModelAdmin):
     # admin 패널에서 필터를 적용할 속성
 
     search_fields = (
-        "basis__startswith",
+        "^basis",
+        "name",
+        # = : __exact
+        # ^ : __startswith
+        # nothing : __contain
     )
     # 검색창 활성화
 

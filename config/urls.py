@@ -18,6 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('reviews/', include("reviews.urls")),
+    path('reviews/', include("reviews.urls")),
 ]
 # 모든 url을 한곳에서만 관리하면 관리효율이 떨어지기 때문에 include를 활용해 나눠서 제작할 예정

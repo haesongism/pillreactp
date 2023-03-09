@@ -9,18 +9,19 @@ class Review(CommonModel):
 
     review_photo = models.ImageField(
         blank=True,
+        null=True,
     )    
 
     writer = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
-        null=False,
+        null=True,
         related_name='reviews',
     )
 
     medicine = models.ForeignKey(
         "medicines.Medicine",
-        blank=False,
+        blank=True,
         on_delete=models.CASCADE,
         related_name='reviews',
     )
