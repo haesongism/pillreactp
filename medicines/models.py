@@ -3,6 +3,9 @@ from django.db import models
 class Medicine(models.Model):
 
     """ Model Definition for Medicines """
+    class EtcChoices(models.TextChoices):
+        ETC = "ETC", "전문의약품"
+        OTC = "OTC", "일반의약품"
 
     name = models.CharField(
         max_length=140,
@@ -26,16 +29,17 @@ class Medicine(models.Model):
     )
     # 주의사항
 
-    cautionOtherMedicines = models.BooleanField(
-        verbose_name="다른 의약품과 함께 복용 가능지 여부",
-        default=True,
-        help_text="해당 DB를 아직 확인하지 않았기 때문에 default값 임시 저장한 상태."
+    cautionOtherMedicines = models.TextField(
+        verbose_name="함께 복용 불가능한 의약품 목록",
+        null=True,
         )
     # 다른 약과 함께 복용 가능한지의 여부
 
-    is_etc = models.BooleanField(
+    etcChoices = models.CharField(
         verbose_name="전문의약품(True), 일반의약품(False)",
-        default=True,
+        choices=EtcChoices.choices,
+        max_length=3,
+        blank=True,
     )
 
     # 평균 평점을 출력해준다.
