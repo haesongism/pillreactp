@@ -35,12 +35,15 @@ class Medicine(models.Model):
         )
     # 다른 약과 함께 복용 가능한지의 여부
 
+    
     etcChoices = models.CharField(
-        verbose_name="전문의약품(True), 일반의약품(False)",
+        verbose_name="전문의약품(ETC), 일반의약품(OTC)",
         choices=EtcChoices.choices,
         max_length=3,
         blank=True,
     )
+
+    #reviewList = 
 
     # 평균 평점을 출력해준다.
     def rating(self):
@@ -53,5 +56,26 @@ class Medicine(models.Model):
                 total_rating += review["rating"]
             return round(total_rating / count, 2)
     
+    # 연동된 review 수
+    def reviews_count(self):
+        count = self.reviews.count()
+        if count == 0:
+            return "No Reviews"
+        else:
+            return count;
+
+    # 연동된 review title
+    def reviews_titles(self):
+        count = self.reviews.count()
+        if count == 0:
+            return "No Reviews"
+        else:
+            reviews_titleList = []
+            for review in self.reviews.all().values("title"):
+                reviews_titleList.append(review)
+            return reviews_titleList
+
+
+
     def __str__(self) -> str:
         return self.name

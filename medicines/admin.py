@@ -9,8 +9,10 @@ class MedicineAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "basis",
-        "cautionOtherMedicines",
         "rating",
+        "reviews_count",
+        "reviews_titles",
+        "cautionOtherMedicines",
     )
     # admin 패널에 표기할 속성
 

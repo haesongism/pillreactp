@@ -39,7 +39,6 @@ CUSTOM_APPS = [
     'users.apps.UsersConfig',
     'reviews.apps.ReviewsConfig',
     'pharmacies.apps.PharmaciesConfig',
-    'comments.apps.CommentsConfig',
     'common.apps.CommonConfig',
     'direct_messages.apps.DirectMessagesConfig',
     'announcements.apps.AnnouncementsConfig',
