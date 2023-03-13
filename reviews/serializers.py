@@ -7,7 +7,8 @@ from users.serializers import TinyUserSerializer
 
 # 수동 테스트 코드
 class ReviewListSerializer(ModelSerializer):
-    writer = TinyUserSerializer()
+    writer = TinyUserSerializer(read_only=True)
+    # 보안상 이유 때문에 response로 받지 않고 
     # users app Serializers.py에서 불러온 유저 데이터만 출력할 수 있게 변경
     # comment = CommentSerializer(many=True)를 활용해서 댓글에 대한 표기도 추가 가능하다.
     class Meta:

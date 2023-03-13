@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
+from rest_framework.exceptions import NotFound, NotAuthenticated
 
 """
 class ReviewViewSet(ModelViewSet):
@@ -28,19 +29,24 @@ class Reviews(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = ReviewDetailSerializer(data=request.data)
+        if request.user.is_authenticated:
+            # 사용자 인증
+            serializer = ReviewDetailSerializer(data=request.data)
         # user가 제공하는 데이터를 가지고 오고 싶다면 받은 data를 넘겨야한다.
         # ReviewSerializser는 보안을 위해 일부 정보만 가질 수 있지만 
         # ReviewDetailSerializer는 __all__선언으로 인해 모든 데이터를 받을 수 있다.
         # 이로 인해 유효성 검사를 수행할 수 있다, 다만 기본적으로 선언된 serializer의 데이터 구조를 충족시켜야한다.
-        if serializer.is_valid():
-            new_review = serializer.save()
-            serializer = ReviewDetailSerializer(new_review)
-            # 유저에게서 받은 데이터를 활용하여 Review 인스턴스를 생성해준다.
-            # serializers.py에서 class를 생성해주면 해당 부분에서 처리를 진행한다.
-            return Response(serializer.data)
+            if serializer.is_valid():
+                new_review = serializer.save(writer=request.user)
+                # 새로운 리뷰 생성시 로그인한 유저의 정보를 자동으로 불러와서 사용한다.
+                serializer = ReviewDetailSerializer(new_review)
+                # 유저에게서 받은 데이터를 활용하여 Review 인스턴스를 생성해준다.
+                # serializers.py에서 class를 생성해주면 해당 부분에서 처리를 진행한다.
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors)
         else:
-            return Response(serializer.errors)
+            raise NotAuthenticated
 
 
 class ReviewDetail(APIView):
@@ -49,7 +55,7 @@ class ReviewDetail(APIView):
         try:
             return Review.objects.get(pk=pk)
         except Review.DoesNotExist:
-            raise ModuleNotFoundError
+            raise NotFound
     # django REST API의 컨벤션, API의 상세한 부분을 찾을 때는 해당 함수를 거쳐서 진행되게끔 작성하는게 좋다.
 
     def get(self, request, pk):
