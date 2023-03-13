@@ -28,15 +28,17 @@ class Reviews(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = ReviewListSerializer(data=request.data)
+        serializer = ReviewDetailSerializer(data=request.data)
         # user가 제공하는 데이터를 가지고 오고 싶다면 받은 data를 넘겨야한다.
-        # 데이터 검사를 위해 세팅을 했기 때문에 ReviewSerializer는 이미 데이터의 형태를 모두 알고 있다
+        # ReviewSerializser는 보안을 위해 일부 정보만 가질 수 있지만 
+        # ReviewDetailSerializer는 __all__선언으로 인해 모든 데이터를 받을 수 있다.
         # 이로 인해 유효성 검사를 수행할 수 있다, 다만 기본적으로 선언된 serializer의 데이터 구조를 충족시켜야한다.
         if serializer.is_valid():
             new_review = serializer.save()
+            serializer = ReviewDetailSerializer(new_review)
             # 유저에게서 받은 데이터를 활용하여 Review 인스턴스를 생성해준다.
             # serializers.py에서 class를 생성해주면 해당 부분에서 처리를 진행한다.
-            return Response(ReviewListSerializer(new_review).data)
+            return Response(serializer.data)
         else:
             return Response(serializer.errors)
 

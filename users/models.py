@@ -25,7 +25,10 @@ class User(AbstractUser):
         null=True,
         )
     # 성, 이름은 불필요하기 때문에 제거
-    profile_photo = models.ImageField(blank=True)
+    profile_photo = models.ImageField(
+        blank=True,
+        null=True,
+        )
     name = models.CharField(max_length=150, default="")
 
     gender = models.CharField(
