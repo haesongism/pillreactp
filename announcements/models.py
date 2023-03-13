@@ -23,16 +23,5 @@ class Announcement(CommonModel):
         null=True,
     )
 
-    created_at = models.DateTimeField(
-        verbose_name="작성일",
-        auto_now_add=True,
-        # 해당 object가 생성되었을 때를 필드의 값으로 설정해준다.   
-    )
-
-    updated_at = models.DateTimeField(
-        verbose_name="수정일",
-        auto_now=True,
-        # 해당 object가 저장되었을 때를 필드의 값으로 설정해준다.
-    )
     def __str__(self) -> str:
         return self.title

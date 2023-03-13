@@ -21,5 +21,6 @@ urlpatterns = [
     path('api/v1/reviews/', include("reviews.urls")),
     path('api/v1/medicines/', include("medicines.urls")),
     path('api/v1/pharmacies/', include("pharmacies.urls")),
+    path('api/v1/announcements/', include("announcements.urls")),
 ]
 # 모든 url을 한곳에서만 관리하면 관리효율이 떨어지기 때문에 include를 활용해 나눠서 제작할 예정
