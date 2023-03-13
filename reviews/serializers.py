@@ -1,17 +1,40 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from .models import Review
+from users.serializers import TinyUserSerializer
+
 
 """ 어떻게 json형태로 표현할것인지 정의 """
 
 # 수동 테스트 코드
-class ReviewSerializer(serializers.ModelSerializer):
+class ReviewListSerializer(ModelSerializer):
+    writer = TinyUserSerializer()
+    # users app Serializers.py에서 불러온 유저 데이터만 출력할 수 있게 변경
+    # comment = CommentSerializer(many=True)를 활용해서 댓글에 대한 표기도 추가 가능하다.
     class Meta:
         model = Review
         # Meta클래스를 선언한 후 model 변수에 Review를 넣어주면 자동으로 Review의 모델을 읽어서 Serializer를 구성해준다.
-        fields = "__all__"
+        fields = (
+            "pk",
+            "title",
+            "views",
+            "writer",
+            "medicine",
+            "updated_at",
+        )
         # 표기할 데이터를 정한다.
         # exclude = (), 제외할 항목 선택
         # fields = (), 표기할 항목 선택
+        depth = 1
+        # 리뷰에서 받는 object 정보 확장
+
+class ReviewDetailSerializer(ModelSerializer):
+
+    writer = TinyUserSerializer()
+
+    class Meta:
+        model = Review
+        fields = "__all__"
+
 
 
 """
