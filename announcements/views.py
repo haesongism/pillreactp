@@ -13,12 +13,15 @@ class Announcements(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        serializer = AnnouncementSerializer(data=request.data)
-        if serializer.is_valid():
-            new_announcement = serializer.save()
-            return Response(AnnouncementSerializer(new_announcement))
+        if request.user.is_authenticated:
+            serializer = AnnouncementSerializer(data=request.data)
+            if serializer.is_valid():
+                new_announcement = serializer.save()
+                return Response(AnnouncementSerializer(new_announcement))
+            else:
+                return Response(serializer.errors)
         else:
-            return Response(serializer.errors)
+            raise NotAuthenticated
 
 class AnnouncementDetail(APIView):
 

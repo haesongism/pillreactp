@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Medicine
+from .models import Medicine, Comment
 
 @admin.register(Medicine)
 class MedicineAdmin(admin.ModelAdmin):
@@ -34,4 +34,11 @@ class MedicineAdmin(admin.ModelAdmin):
 
     list_editable = (
         "cautionOtherMedicines",
+    )
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        "medicine",
+        "content",
     )

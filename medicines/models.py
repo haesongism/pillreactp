@@ -1,4 +1,5 @@
 from django.db import models
+from common.models import CommonModel
 
 class Medicine(models.Model):
 
@@ -7,14 +8,12 @@ class Medicine(models.Model):
         ETC = "ETC", "전문의약품"
         OTC = "OTC", "일반의약품"
 
-    name = models.CharField(
-        max_length=140,
+    name = models.TextField(
         verbose_name = "의약품명",
         )
     # 약 이름
 
-    basis = models.CharField(
-        max_length=140,
+    basis = models.TextField(
         verbose_name = "주 성분",
         )
     # 주 성분
@@ -79,3 +78,29 @@ class Medicine(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+class Comment(CommonModel):
+
+    writer = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        #on_delete = models.SET_NULL,
+        null = True,
+        related_name='comment',
+    )
+
+    medicine = models.ForeignKey(
+        "medicines.Medicine",
+        on_delete=models.CASCADE,
+        #on_delete = models.SET_NULL,
+        null = True,
+        related_name='comment',
+    )
+
+    content = models.TextField(
+        null=False,
+        blank=False,
+    )
+
+    def __str__(self) -> str:
+        return self.content

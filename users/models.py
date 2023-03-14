@@ -44,4 +44,13 @@ class User(AbstractUser):
         # 하나만 선택하면 안된다. FK는 one to many를 뜻한다.
     )
 
+    """
+    user_medicines = models.ManyToManyField(
+        "medicines.Medicine",
+        blank=True,
+        related_name='users',
+        # related_name은 FK의 대상이 된 medicines에서 관련된 user에 접근할 때 사용된다.
+        # 하나만 선택하면 안된다. FK는 one to many를 뜻한다.
+    )
+"""
 

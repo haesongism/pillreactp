@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import Medicine
-from .serializers import MedicineSerializer
+from .models import Medicine, Comment
+from .serializers import MedicineSerializer, MedicineDetailSerializer, CommentSerializer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.exceptions import NotFound, NotAuthenticated
 
 class Medicines(APIView):
 
@@ -27,10 +28,10 @@ class MedicineDetail(APIView):
         try:
             return Medicine.objects.get(pk=pk)
         except Medicine.DoesNotExist:
-            raise HTTP_204_NO_CONTENT
+            raise NotFound
 
     def get(self, request, pk):
-        serializer = MedicineSerializer(self.get_obejct(pk))
+        serializer = MedicineDetailSerializer(self.get_object(pk))
         return Response(serializer.data)
     
     def put(self, request, pk):
@@ -38,3 +39,18 @@ class MedicineDetail(APIView):
 
     def delete(self, request, pk):
         pass
+
+
+class Comments(APIView):
+    def get(self, request):
+        all_Comments = Comment.objects.all()
+        serializer = CommentSerializer(all_Comments, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            new_comment = serializer.save()
+            return Response(CommentSerializer(new_comment).data)
+        else:
+            return Response(serializer.errors)

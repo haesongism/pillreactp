@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Review
 from users.serializers import TinyUserSerializer
+from medicines.serializers import TinyMedicineSerializer
 
 
 """ 어떻게 json형태로 표현할것인지 정의 """
@@ -8,6 +9,7 @@ from users.serializers import TinyUserSerializer
 # 수동 테스트 코드
 class ReviewListSerializer(ModelSerializer):
     writer = TinyUserSerializer(read_only=True)
+    medicine = TinyMedicineSerializer(read_only=True)
     # 보안상 이유 때문에 response로 받지 않고 
     # users app Serializers.py에서 불러온 유저 데이터만 출력할 수 있게 변경
     # comment = CommentSerializer(many=True)를 활용해서 댓글에 대한 표기도 추가 가능하다.
@@ -25,7 +27,7 @@ class ReviewListSerializer(ModelSerializer):
         # 표기할 데이터를 정한다.
         # exclude = (), 제외할 항목 선택
         # fields = (), 표기할 항목 선택
-        depth = 1
+        # depth = 1
         # 리뷰에서 받는 object 정보 확장
 
 class ReviewDetailSerializer(ModelSerializer):

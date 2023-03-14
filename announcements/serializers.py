@@ -13,6 +13,7 @@ class AnnouncementSerializer(ModelSerializer):
             'views',
             'title',
             'content',
+            'updated_at',
         )
 
 class AnnouncementDetailSerializer(ModelSerializer):
