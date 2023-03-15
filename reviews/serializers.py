@@ -33,11 +33,10 @@ class ReviewListSerializer(ModelSerializer):
 class ReviewDetailSerializer(ModelSerializer):
 
     writer = TinyUserSerializer()
-
+    medicine = TinyMedicineSerializer(read_only=True)
     class Meta:
         model = Review
         fields = "__all__"
-
 
 
 """

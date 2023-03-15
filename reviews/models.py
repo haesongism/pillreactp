@@ -15,7 +15,6 @@ class Review(CommonModel):
     writer = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
-        null=True,
         related_name='reviews',
     )
 

@@ -3,7 +3,7 @@ from .models import Announcement
 from .serializers import AnnouncementSerializer, AnnouncementDetailSerializer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
-from rest_framework.exceptions import NotFound, NotAuthenticated
+from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDenied
 
 class Announcements(APIView):
 
@@ -13,10 +13,10 @@ class Announcements(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        if request.user.is_authenticated:
+        if request.user.is_staff or request.user.is_superuser:
             serializer = AnnouncementSerializer(data=request.data)
             if serializer.is_valid():
-                new_announcement = serializer.save()
+                new_announcement = serializer.save(writer=request.user)
                 return Response(AnnouncementSerializer(new_announcement))
             else:
                 return Response(serializer.errors)
@@ -46,3 +46,14 @@ class AnnouncementDetail(APIView):
             return Response(AnnouncementDetailSerializer(updated_review).data)
         else:
             return Response(serializer.errors)
+        
+    def delete(self, request, pk):
+        announcement = self.get_object(pk)
+        # 1. 유저가 아니면 삭제할 수 없다.
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        # 2. 작성자가 아니면 삭제할 수 없다.
+        if not request.user.is_staff or not request.user.is_superuser:
+            raise PermissionDenied
+        announcement.delete()
+        return Response(status=HTTP_204_NO_CONTENT)    

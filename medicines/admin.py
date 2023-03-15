@@ -7,6 +7,7 @@ class MedicineAdmin(admin.ModelAdmin):
     # admin 패널에 효과적인 표기 방식을 적용 가능
 
     list_display = (
+        "permission_writer",
         "name",
         "basis",
         "rating",

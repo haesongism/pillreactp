@@ -8,6 +8,14 @@ class Medicine(models.Model):
         ETC = "ETC", "전문의약품"
         OTC = "OTC", "일반의약품"
 
+    permission_writer = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        #on_delete = models.SET_NULL,
+        null = True,
+        related_name='Medicine',
+    )
+
     name = models.TextField(
         verbose_name = "의약품명",
         )

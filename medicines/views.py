@@ -4,7 +4,7 @@ from .models import Medicine, Comment
 from .serializers import MedicineSerializer, MedicineDetailSerializer, CommentSerializer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
-from rest_framework.exceptions import NotFound, NotAuthenticated
+from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDenied
 
 
 class Medicines(APIView):
@@ -16,8 +16,12 @@ class Medicines(APIView):
     
     def post(self, request):
         serializer = MedicineSerializer(data=request.data)
+        if request.user.is_authenticated:
+            return NotAuthenticated
+        if not request.user.is_staff or not request.user.is_superuser:
+            return PermissionDenied
         if serializer.is_valid():
-            new_medicine = serializer.save()
+            new_medicine = serializer.save(permission_writer=request.user)
             return Response(MedicineSerializer(new_medicine).data)
         else:
             return Response(serializer.errors)
@@ -36,10 +40,33 @@ class MedicineDetail(APIView):
         return Response(serializer.data)
     
     def put(self, request, pk):
-        pass
+        medicine = self.get_object(pk)
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        if not request.user.is_staff or not request.user.is_superuser:
+            raise PermissionDenied
+        serializer = MedicineDetailSerializer(
+            self.get_object(pk),
+            data=request.data,
+            partial=True,
+            )
+        if serializer.is_valid():
+            updated_medicine = serializer.save(permission_writer=request.user)
+            return Response(MedicineDetailSerializer(updated_medicine).data)
+        else:
+            return Response(serializer.errors)
 
     def delete(self, request, pk):
-        pass
+        medicine = self.get_object(pk)
+        # 1. 유저가 아니면 삭제할 수 없다.
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        # 2. 작성자가 아니면 삭제할 수 없다.
+        if not request.user.is_staff or not request.user.is_superuser:
+            raise PermissionDenied
+        medicine.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
+
 
 
 class Comments(APIView):
@@ -55,3 +82,4 @@ class Comments(APIView):
             return Response(CommentSerializer(new_comment).data)
         else:
             return Response(serializer.errors)
+        # save하기 전에 serializer에서 user정보를 받아와야한다.
