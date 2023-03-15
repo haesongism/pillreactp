@@ -12,7 +12,6 @@ class MedicineAdmin(admin.ModelAdmin):
         "basis",
         "rating",
         "reviews_count",
-        "reviews_titles",
         "cautionOtherMedicines",
     )
     # admin 패널에 표기할 속성

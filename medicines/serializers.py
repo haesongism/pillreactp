@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Medicine, Comment
+#from reviews.serializers import ReviewListSerializer 
 
 class CommentSerializer(ModelSerializer):
     class Meta:
@@ -21,12 +22,14 @@ class MedicineSerializer(ModelSerializer):
 
 
 class MedicineDetailSerializer(ModelSerializer):
-    comment = CommentSerializer(read_only=True, many=True)
+    #comment = CommentSerializer(read_only=True, many=True)
     # Medicine과 Comment는 relationship이기 때문에 수동으로 연결해줘야한다. 
-
+    #review = ReviewListSerializer(read_only=True, many=True)
     class Meta:
         model = Medicine
-        fields = (
+        fields = "__all__"
+        """
+        (
             "name",
             "basis",
             "effect",
@@ -35,9 +38,9 @@ class MedicineDetailSerializer(ModelSerializer):
             "etcChoices",
             "rating",
             "reviews_count",
-            "reviews_titles",
             "comment",
-        )
+            #"review",
+        )"""
 
 
 class TinyMedicineSerializer(ModelSerializer):

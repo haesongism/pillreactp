@@ -69,20 +69,7 @@ class Medicine(models.Model):
         if count == 0:
             return "No Reviews"
         else:
-            return count;
-
-    # 연동된 review title
-    def reviews_titles(self):
-        count = self.reviews.count()
-        if count == 0:
-            return "No Reviews"
-        else:
-            reviews_titleList = []
-            for review in self.reviews.all().values("title"):
-                reviews_titleList.append(review)
-            return reviews_titleList
-
-
+            return count
 
     def __str__(self) -> str:
         return self.name
