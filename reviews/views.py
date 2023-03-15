@@ -23,8 +23,16 @@ class ReviewViewSet(ModelViewSet):
 
 class Reviews(APIView):
     
-    def get(self, request):
-        all_reviews = Review.objects.all()
+    def get(self, request, pk):
+        try:
+            page = request.query_params.get('page', 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 10
+        start = (page-1) * page_size
+        end = start + page_size
+        all_reviews = Review.objects.all()[start:end]
         serializer = ReviewListSerializer(all_reviews, many=True)
         return Response(serializer.data)
 

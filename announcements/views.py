@@ -7,8 +7,16 @@ from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDeni
 
 class Announcements(APIView):
 
-    def get(self, request):
-        all_Announcements = Announcement.objects.all()
+    def get(self, request, pk):
+        try:
+            page = request.query_params.get('page', 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 10
+        start = (page-1) * page_size
+        end = start + page_size
+        all_Announcements = Announcement.objects.all()[start:end]
         serializer = AnnouncementSerializer(all_Announcements, many=True)
         return Response(serializer.data)
     

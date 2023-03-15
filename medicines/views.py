@@ -5,12 +5,20 @@ from .serializers import MedicineSerializer, MedicineDetailSerializer, CommentSe
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDenied
-
+from reviews.serializers import ReviewListSerializer
 
 class Medicines(APIView):
 
     def get(self, request):
-        all_Medicines = Medicine.objects.all()
+        try:
+            page = request.query_params.get('page', 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 10
+        start = (page-1) * page_size
+        end = start + page_size    
+        all_Medicines = Medicine.objects.all()[start:end]
         serializer = MedicineSerializer(all_Medicines, many=True)
         return Response(serializer.data)
     
@@ -83,3 +91,28 @@ class Comments(APIView):
         else:
             return Response(serializer.errors)
         # save하기 전에 serializer에서 user정보를 받아와야한다.
+
+
+class MedicineReview(APIView):
+    """ 리뷰에서 연동된 FK medicine을 활용하여 관련 리뷰 출력 """
+    def get_object(self, pk):
+        try:
+            return Medicine.objects.get(pk=pk)
+        except Medicine.DoesNotExist:
+            raise NotFound
+    
+    def get(self, request, pk):
+        try:
+            page = request.query_params.get('page', 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 10
+        start = (page-1) * page_size
+        end = start + page_size
+        medicine = self.get_object(pk)
+        serializer = ReviewListSerializer(
+            medicine.reviews.all()[start:end],#[:]pagination! 엄청 심플하다. 사랑한다 장고
+            many=True,
+            )
+        return Response(serializer.data)
