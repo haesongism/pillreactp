@@ -3,23 +3,23 @@ from .models import Pharmacy
 from .serializers import PharmacySerializer, PharmacyDetailSerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, NotAuthenticated
-from rest_framework.pagination import PageNumberPagination ,LimitOffsetPagination, CursorPagination
 
-class PharmacyPagination(CursorPagination):
-    page_size = 10 # 한 페이지에 표시될 아이템 수
-    page_query_param = 'page' # 페이지 번호를 나타내는 get 매개 변수 이름
-    page_size_query_param = 'per_page' # 페이지 크기를 나타내는 get 매개 변수 이름
-    max_page_size = 100 # 페이지 크기의 최대 값
+
 
 class Pharmacies(APIView):
-    pagination_class = PharmacyPagination
 
     def get(self, request):
-        all_Pharmacies = Pharmacy.objects.all()
-        paginator = self.pagination_class()
-        result_page = paginator.paginate_queryset(all_Pharmacies, request)
-        serializer = PharmacySerializer(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)#Response(serializer.data)
+        try:
+            page = request.query_params.get('page', 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 10
+        start = (page-1) * page_size
+        end = start + page_size
+        all_Pharmacies = Pharmacy.objects.all()[start:end]
+        serializer = PharmacySerializer(all_Pharmacies, many=True)
+        return Response(serializer.data)#Response(serializer.data)
     
     def post(self, request):
         serializer = PharmacySerializer(data=request.data)

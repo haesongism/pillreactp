@@ -6,6 +6,33 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDenied
 from reviews.serializers import ReviewListSerializer
+from .models import Medicine
+from django.db.models import Q
+from django.core.paginator import Paginator
+
+def search(request):
+  content_list = Medicine.objects.all()
+  search = request.GET.get('search','')
+  if search:
+    search_list = content_list.filter(
+      Q(name__icontains = search),# | #제목
+      #Q(body__icontains = search) | #내용
+      #Q(writer__username__icontains = search) #글쓴이
+    )
+  paginator = Paginator(search_list,5)
+  page = request.GET.get('page','')
+  posts = paginator.get_page(page)
+  board = Medicine.objects.all()
+
+  return render(request, 'search.html',{'posts':posts, 'Board':board, 'search':search})
+
+
+
+    
+   
+
+
+
 
 class Medicines(APIView):
 
