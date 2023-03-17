@@ -1,4 +1,10 @@
-h_list<form method="GET" action="{% url 'search' %}">
+<form method="GET" action="{% url 'search' %}">
+  {% for board in boards %}
+    <ul>
+      <li>{{board.name}}</li>
+      <li>{{board.effect}}</li>
+    </ul>
+    {% endfor %}
     <!--pagenation-->
     <div class="pagination">
       {% if posts.has_previous %}

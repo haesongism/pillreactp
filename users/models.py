@@ -25,7 +25,7 @@ class User(AbstractUser):
         null=True,
         )
     # 성, 이름은 불필요하기 때문에 제거
-    profile_photo = models.ImageField(
+    profile_photo = models.URLField(
         blank=True,
         null=True,
         )

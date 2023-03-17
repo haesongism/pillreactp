@@ -9,23 +9,144 @@ from reviews.serializers import ReviewListSerializer
 from .models import Medicine
 from django.db.models import Q
 from django.core.paginator import Paginator
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from google.cloud import vision
+import io
+import os
+import re
 
-def search(request):
-  content_list = Medicine.objects.all()
-  search = request.GET.get('search','')
-  if search:
-    search_list = content_list.filter(
-      Q(name__icontains = search),# | #제목
-      #Q(body__icontains = search) | #내용
-      #Q(writer__username__icontains = search) #글쓴이
-    )
-  paginator = Paginator(search_list,5)
-  page = request.GET.get('page','')
-  posts = paginator.get_page(page)
-  board = Medicine.objects.all()
+""" 의약품 직접검색 """
+def searchMedicine(request):
+    content_list = Medicine.objects.all()
+    search = request.GET.get('searchmedicine','')
 
-  return render(request, 'search.html',{'posts':posts, 'Board':board, 'search':search})
+    if search:
+        search_list = content_list.filter(
+        Q(name__icontains = search),# | #제목
+        #Q(body__icontains = search) | #내용
+        #Q(writer__username__icontains = search) #글쓴이
+        
+        )
+    print(search_list)
+    paginator = Paginator(search_list,5)
+    page = request.GET.get('page','')
+    posts = paginator.get_page(page)
+    boards = Medicine.objects.all()
 
+    return render(request, 'search.html',{'posts':posts, 'Boards':boards, 'search':search})
+
+""" 이미지 ocr 검색 """
+class find_str:
+  def __init__(self, json_path, image_path, df_str):
+    self.json_path = json_path
+    self.image_path = image_path
+    self.df_str = df_str
+    self.low_name = ['자모', '뇌선', '얄액', '쿨정']
+    self.x_list = ['(', '[', '{', '<']
+    self.remove_str = '_|"|'
+    self.start_str = []
+    self.end_str = []
+  # 1. 불필요한 문자 찾기
+  def num_stopword(self, DB_name_string):
+    num_list = []
+    # 불필요한 문자 위치 찾기
+    for i in self.x_list:
+      num = DB_name_string.find(i)
+      # 없으면 pass
+      if num == -1:
+        pass
+      else:
+        num_list.append(num)
+    # 제일 앞에 있는 특수문자 찾기
+    num_list.sort()
+    if len(num_list) != 0:
+      str_stopword = DB_name_string[num_list[0]]
+    # 특수문자가 없는 경우 DB에 없는 문자로 split 영향 없애기
+    else:
+      str_stopword = '?'
+    return str_stopword
+  
+  def txt_extract(self):
+    # Set environment variable
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.json_path
+    # Instantiates a client
+    client = vision.ImageAnnotatorClient()
+    a = []
+    # The name of the image file to annotate
+    file_name = os.path.abspath(self.image_path)
+    # Loads the image into memory
+    with io.open(file_name, 'rb') as image_file:
+        content = image_file.read()
+    image = vision.Image(content=content)
+    # Performs label detection on the image file
+    response = client.label_detection(image=image)
+    labels = response.label_annotations
+    # Performs text detection on the image file
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+    texts_list = list(texts)
+    txt_list = texts_list[0].description.split()
+    return txt_list
+  def searching(self):
+    txt_list = self.txt_extract()
+    df_str = self.df_str
+    result = []
+    trash_set = set(['조제약사', '에너지대사', '수납금액'])
+    for txt in txt_list:
+        str_stopword = self.num_stopword(txt)
+    # 괄호 제거한 문자
+        word = txt.split(str_stopword)[0]
+        word = re.sub(self.remove_str, '', word)
+        word = word.replace('*' ,'')
+        if len(word) < 3 and txt not in self.low_name:
+            pass
+        else:
+            for x, y in zip(df_str['start_str'], df_str['end_str']):
+                if word[0] == x and word[-1] == y:
+                    result.append(word)
+
+    # 중복제거
+    result = set(result)
+
+    # trash 단어 제거
+    result = result - trash_set
+    return result
+
+
+
+def SearchOCR(request):
+    final_list = []
+    content_list = Medicine.objects.all()
+
+    json_path = "D:/test/ocrmedicine-86e789bdf085.json"
+    image_path = "D:/test/IMG_4471.jpg"
+    df_str = pd.read_csv('D:/db/df_str.csv')
+    find = find_str(json_path, image_path, df_str)
+    results = find.searching()
+    print(results)# set형식으로 여러개의 결과값 출력.
+    
+
+    for result in results:
+        if result:
+            ocr_result_list = content_list.filter(
+            Q(name__icontains = result),# | #제목
+            #Q(body__icontains = search) | #내용
+            #Q(writer__username__icontains = search) #글쓴이
+
+            )
+            final_list.append(ocr_result_list)
+    
+    print(final_list)
+    paginator = Paginator(final_list,5)
+    page = request.GET.get('page','')
+    posts = paginator.get_page(page)
+    boards = Medicine.objects.all()
+
+    return render(request, 'search.html',{'posts':posts, 'Boards':boards, 'result':result})
+ 
 
 
     
