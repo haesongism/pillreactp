@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import Medicine, Comment
-from .serializers import MedicineSerializer, MedicineDetailSerializer, CommentSerializer
+from .models import Medicine, Comment, MedicineElasticSearch
+from .serializers import MedicineSerializer, MedicineDetailSerializer, CommentSerializer, MedicineElasticSearchSerializer, MedicineElasticSaveSerializer
 from rest_framework.response import Response
-from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_201_CREATED
 from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDenied
 from reviews.serializers import ReviewListSerializer
 from .models import Medicine
@@ -17,6 +17,52 @@ from google.cloud import vision
 import io
 import os
 import re
+from elasticsearch_dsl import Search
+from elasticsearch.exceptions import NotFoundError
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
+
+
+
+""" 엘라스틱 서치 테스트 """
+class ElasticSearch(APIView):
+    """ 엘라스틱 서치에 저장된 데이터 출력 """
+    def get(self, request):
+        # 검색어
+        query = request.GET.get('elasticsearch-search','')
+        s = Search(index='myindex').query('multi_match', query=query, fields=['pk','name', 'etcChoices', 'rating'])
+        # elasticsearch-dsl 패키지의 search 클래스를 사용하여
+        # Elasticsearch에서 데이터를 검색하는 예시,
+        # request에서 search 파라미터를 받아와서 Search 클래스로 엘라스틱서치 쿼리를 작성.
+        try:
+            response = s.excute()
+            # excute() : 작성된 엘라스틱 서치 쿼리로 엘라스틱서치에 요청하여 결과를 받아옴.
+            hits = response.hits
+            results = [hit.to_dict() for hit in hits]
+            serialized_results = MedicineElasticSearchSerializer(results, many=True).data
+        except NotFoundError:
+            serialized_results = []
+        return Response({'results': serialized_results})
+
+class SaveToElasticsearchAPIView(APIView):
+    """ 엘라스틱 서치에 저장 """
+    def post(self, request):
+        serializer = MedicineElasticSaveSerializer(data=request.data)
+        if serializer.is_valid():
+            medicine = Medicine.objects.get(id=request.data['medicine_id'])
+            Medicine_document = MedicineElasticSearch(
+                meta={'id': medicine.id},
+                name=medicine.name,
+                etcChoices=medicine.etcChoices,
+                rating=medicine.rating
+            )
+            Medicine_document.save()
+            print("finish save")
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        print("fail save")
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
 
 """ 의약품 직접검색 """
 def searchMedicine(request):

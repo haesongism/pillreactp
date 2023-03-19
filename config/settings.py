@@ -46,6 +46,8 @@ ALLOWED_HOSTS = []
 # Application definition
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'elasticsearch_dsl',
+    'elasticsearch',
 ]
 
 
@@ -121,6 +123,16 @@ DATABASES = {
     }
 }
 
+# ElasticSearch
+#from elasticsearch_dsl.connections import connections
+ELASTICSEARCH_DSL = {
+    'default': {
+        'HOSTS': 'localhost:9200',
+    },
+}
+
+#connections.configure(**ELASTICSEARCH_DSL)
+# 해당 함수를 호출하여 엘라스틱 서치 클라이언트 구성 정보를 가지고 인스턴스를 구성한다.
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
