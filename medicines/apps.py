@@ -15,14 +15,14 @@ class MedicinesConfig(AppConfig):
         from medicines.models import Medicine
         from django.db.models.signals import post_save
         from django.dispatch import receiver
-        """
+        
         @receiver(post_save, sender=Medicine)
         def save_to_elasticsearch(sender, instance, **kwargs):
             es.index(index='id', body={
                 'name': instance.name,
                 'effect': instance.effect,
             })
-        
+        """
         def copy_to_elasticsearch():
             # 모든 MyModel 객체 가져오기
             mymodels = Medicine.objects.all()

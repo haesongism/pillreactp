@@ -1,6 +1,6 @@
 from django.db import models
 from common.models import CommonModel
-from elasticsearch_dsl import Document, Text, Keyword, Integer
+#from elasticsearch_dsl import Document, Text, Keyword, Integer
 
 """ 일반 장고 모델 """
 class Medicine(models.Model):
@@ -103,7 +103,7 @@ class Comment(CommonModel):
         return self.content
     
 
-""" 엘라스틱 서치와 장고 매핑 코드 """
+""" 엘라스틱 서치와 장고 매핑 코드 
 from elasticsearch import Elasticsearch
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -138,3 +138,4 @@ class MedicineElasticSearch(Document):
 
 
 
+"""

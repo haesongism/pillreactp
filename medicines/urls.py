@@ -8,8 +8,9 @@ urlpatterns = [
     path("<int:pk>/comments", views.Comments.as_view()),
     path('defaultsearch/',views.searchMedicine, name="searchmedicine"),
     path('ocrsearch/',views.SearchOCR, name='searchocr'),
-    path('elasticsearch/',views.ElasticSearch.as_view(), name='elasticsearch-search'),
-    path('elasticsave/',views.SaveToElasticsearchAPIView.as_view()),
+    path('search_result/',views.searchMedicineResult.as_view()),
+    #path('elasticsearch/',views.ElasticSearch.as_view(), name='elasticsearch-search'),
+    #path('elasticsave/',views.SaveToElasticsearchAPIView.as_view()),
 ]
 
 # path('api/v1/medicines/', include("medicines.urls")),

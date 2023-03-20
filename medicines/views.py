@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import Medicine, Comment, MedicineElasticSearch
-from .serializers import MedicineSerializer, MedicineDetailSerializer, CommentSerializer, MedicineElasticSearchSerializer, MedicineElasticSaveSerializer
+from .models import Medicine, Comment
+#, MedicineElasticSearch
+from .serializers import MedicineSerializer, MedicineDetailSerializer, CommentSerializer
+#, MedicineElasticSearchSerializer, MedicineElasticSaveSerializer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_201_CREATED
 from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDenied
@@ -17,16 +19,19 @@ from google.cloud import vision
 import io
 import os
 import re
+import time
+
+
+
+
+
+""" 엘라스틱 서치 테스트
 from elasticsearch_dsl import Search
 from elasticsearch.exceptions import NotFoundError
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-
-
-
-""" 엘라스틱 서치 테스트 """
 class ElasticSearch(APIView):
-    """ 엘라스틱 서치에 저장된 데이터 출력 """
+    # 엘라스틱 서치에 저장된 데이터 출력
     def get(self, request):
         # 검색어
         query = request.GET.get('elasticsearch-search','')
@@ -45,7 +50,7 @@ class ElasticSearch(APIView):
         return Response({'results': serialized_results})
 
 class SaveToElasticsearchAPIView(APIView):
-    """ 엘라스틱 서치에 저장 """
+    # 엘라스틱 서치에 저장
     def post(self, request):
         serializer = MedicineElasticSaveSerializer(data=request.data)
         if serializer.is_valid():
@@ -61,29 +66,58 @@ class SaveToElasticsearchAPIView(APIView):
             return Response(serializer.data, status=HTTP_201_CREATED)
         print("fail save")
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
+ """
 
 
 """ 의약품 직접검색 """
 def searchMedicine(request):
+    start = time.time()
     content_list = Medicine.objects.all()
     search = request.GET.get('searchmedicine','')
-
+    print(search)
+    searchMedicine_result=[]
     if search:
-        search_list = content_list.filter(
+        searchMedicine_result = content_list.filter(
         Q(name__icontains = search),# | #제목
         #Q(body__icontains = search) | #내용
         #Q(writer__username__icontains = search) #글쓴이
         
         )
-    print(search_list)
-    paginator = Paginator(search_list,5)
+    print(searchMedicine_result)  # 검색 결과를 콘솔에 출력합니다.
+    end = time.time()
+    print(f"{end - start:.5f} sec")
+    paginator = Paginator(searchMedicine_result,5)
     page = request.GET.get('page','')
     posts = paginator.get_page(page)
     boards = Medicine.objects.all()
+    serializer = MedicineDetailSerializer(searchMedicine_result, many=True)
+    return render(request, 'search_medicine.html',{'posts':posts, 'Boards':boards, 'search':search})
 
-    return render(request, 'search.html',{'posts':posts, 'Boards':boards, 'search':search})
+""" 의약품 직접검색 테스트 """
 
+class searchMedicineResult(APIView):
+    def get(self, request):
+        try:
+            page = request.query_params.get('page', 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 10
+        start = (page-1) * page_size
+        end = start + page_size
+        content_list = Medicine.objects.all()
+        search = "박하" #request.GET.get('searchmedicine','박하')
+        print(search)
+        searchMedicine_result=[]
+        if search:
+            searchMedicine_result = content_list.filter(
+            Q(name__icontains = search),
+            )
+        all_Medicines = searchMedicine_result[start:end]
+        print(all_Medicines)
+        serializer = MedicineDetailSerializer(all_Medicines, many=True)
+        return Response(serializer.data)
+    
 """ 이미지 ocr 검색 """
 class find_str:
   def __init__(self, json_path, image_path, df_str):
@@ -161,9 +195,8 @@ class find_str:
     result = result - trash_set
     return result
 
-
-
 def SearchOCR(request):
+    start = time.time()
     final_list = []
     content_list = Medicine.objects.all()
 
@@ -190,16 +223,9 @@ def SearchOCR(request):
     page = request.GET.get('page','')
     posts = paginator.get_page(page)
     boards = Medicine.objects.all()
-
-    return render(request, 'search.html',{'posts':posts, 'Boards':boards, 'result':result})
- 
-
-
-    
-   
-
-
-
+    end = time.time()
+    print(f"{end - start:.5f} sec")
+    return render(request, 'search_medicine.html',{'posts':posts, 'Boards':boards, 'result':result})
 
 class Medicines(APIView):
 
@@ -213,6 +239,7 @@ class Medicines(APIView):
         start = (page-1) * page_size
         end = start + page_size    
         all_Medicines = Medicine.objects.all()[start:end]
+        print(all_Medicines)
         serializer = MedicineSerializer(all_Medicines, many=True)
         return Response(serializer.data)
     
