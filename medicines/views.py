@@ -93,7 +93,7 @@ def searchMedicine(request):
     serializer = MedicineDetailSerializer(searchMedicine_result, many=True)
     return render(request, 'search_medicine.html',{'posts':posts, 'Boards':boards, 'search':search})
 
-""" 의약품 직접검색 테스트 """
+""" 의약품 직접검색 결과 테스트 """
 
 class searchMedicineResult(APIView):
     def get(self, request):
@@ -227,6 +227,30 @@ def SearchOCR(request):
     print(f"{end - start:.5f} sec")
     return render(request, 'search_medicine.html',{'posts':posts, 'Boards':boards, 'result':result})
 
+""" 증상검색 테스트 """
+def SearchSymptom(request):
+    start = time.time()
+    content_list = Medicine.objects.all()
+    search = request.GET.get('searchsymptom','')
+    print(search)
+    searchSymptom_result=[]
+    if search:
+        searchSymptom_result = content_list.filter(
+        Q(effect__icontains = search),#효과
+        
+        )
+    print(searchSymptom_result)  # 검색 결과를 콘솔에 출력합니다.
+    end = time.time()
+    print(f"{end - start:.5f} sec")
+    paginator = Paginator(searchSymptom_result,5)
+    page = request.GET.get('page','')
+    posts = paginator.get_page(page)
+    boards = Medicine.objects.all()
+    serializer = MedicineDetailSerializer(searchSymptom_result, many=True)
+    return render(request, 'search_medicine.html',{'posts':posts, 'Boards':boards, 'search':search})  
+
+
+
 class Medicines(APIView):
 
     def get(self, request):
@@ -255,6 +279,8 @@ class Medicines(APIView):
         else:
             return Response(serializer.errors)
         
+
+
 
 class MedicineDetail(APIView):
 
