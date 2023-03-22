@@ -18,7 +18,7 @@ class AnnouncementSerializer(ModelSerializer):
 
 class AnnouncementDetailSerializer(ModelSerializer):
 
-    writer = TinyUserSerializer()
+    writer = TinyUserSerializer(read_only=True)
 
     class Meta:
         model = Announcement

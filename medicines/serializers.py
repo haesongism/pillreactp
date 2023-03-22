@@ -7,7 +7,7 @@ from elasticsearch_dsl import serializer
 
 
 
-""" ElasticSearch Serializer 
+"""ElasticSearch Serializer """
 class MedicineElasticSearchSerializer(serializer.JSONSerializer, ModelSerializer):
     # ElasticSearch to Json 출력용 Serializer
     class Meta:
@@ -18,7 +18,7 @@ class MedicineElasticSearchSerializer(serializer.JSONSerializer, ModelSerializer
             "etcChoices",
             "rating",
         )
-
+"""
 class MedicineElasticSaveSerializer(ModelSerializer):
     #MySQL to ElasticSearch 저장용 Serializer
     name = serializers.CharField(max_length=200)
@@ -42,8 +42,8 @@ class MedicineElasticSaveSerializer(ModelSerializer):
             "etcChoices",
             "rating",
         )    
-"""
 
+"""
 """ Django Serializer """
 
 class CommentSerializer(ModelSerializer):

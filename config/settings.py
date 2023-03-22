@@ -124,14 +124,14 @@ DATABASES = {
 }
 
 # ElasticSearch
-#from elasticsearch_dsl.connections import connections
+from elasticsearch_dsl import connections
 ELASTICSEARCH_DSL = {
     'default': {
         'HOSTS': 'localhost:9200',
     },
 }
 
-#connections.configure(**ELASTICSEARCH_DSL)
+connections.create_connection(hosts=['localhost'])
 # 해당 함수를 호출하여 엘라스틱 서치 클라이언트 구성 정보를 가지고 인스턴스를 구성한다.
 
 # Password validation

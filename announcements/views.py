@@ -7,7 +7,7 @@ from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDeni
 
 class Announcements(APIView):
 
-    def get(self, request, pk):
+    def get(self, request):
         try:
             page = request.query_params.get('page', 1)
             page = int(page)
@@ -25,7 +25,7 @@ class Announcements(APIView):
             serializer = AnnouncementSerializer(data=request.data)
             if serializer.is_valid():
                 new_announcement = serializer.save(writer=request.user)
-                return Response(AnnouncementSerializer(new_announcement))
+                return Response(AnnouncementSerializer(new_announcement).data)
             else:
                 return Response(serializer.errors)
         else:

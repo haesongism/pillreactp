@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Pharmacy
+from elasticsearch_dsl import serializer
 
 """ 어떻게 json형태로 표현할것인지 정의 """
 
@@ -24,3 +25,16 @@ class PharmacyDetailSerializer(serializers.ModelSerializer):
         # 표기할 데이터를 정한다.
         # exclude = (), 제외할 항목 선택
         # fields = (), 표기할 항목 선택
+
+
+class PharmacyElasticSearchSerializer(serializer.JSONSerializer, serializers.ModelSerializer):
+    # ElasticSearch to Json 출력용 Serializer
+    class Meta:
+        model = Pharmacy
+        fields = (
+            "title",
+            "callNumber",
+            "address",
+            "coordinate_X",
+            "coordinate_Y",
+        )
