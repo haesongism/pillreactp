@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 export const MyPage = () => {
   return (
     <MainContainer>
-      <span>My Page</span>
+      <span>마이페이지</span>
     </MainContainer>
   );
 };
@@ -13,7 +13,7 @@ export const MyPage = () => {
 const MainContainer = styled.div`
   width: 100%;
   height: auto;
-  background-color: #d3b9eb;
+  background-color: #2E327A;
   position: relative;
   display: flex;
   justify-content: center;
