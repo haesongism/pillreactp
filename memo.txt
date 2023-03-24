@@ -1,0 +1,3 @@
+C:\Users\Playdata\Desktop\backend-REACT-1\backend-REACT\medicines_inputData.py -> 증상, 약품검색 데이터 (DB_DATA)
+C:\Users\Playdata\Desktop\backend-REACT-1\backend-REACT\medicines\views.py -> ocr 데이터 (df_str) /약봉투 json 
+C:\Users\Playdata\Desktop\backend-REACT-1\backend-REACT\pharmacies_inputData.py -> 약국 (패스)

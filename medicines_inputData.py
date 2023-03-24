@@ -2,7 +2,8 @@ import pandas as pd
 import pymysql
 from sqlalchemy import create_engine
 
-df = pd.read_csv('D:/db/DB_DATA.csv', index_col=0)#
+df = pd.read_csv('C:/Users/Playdata/Desktop/data/DB_DATA(0324).csv', index_col=0)
+#dbdata 5차수정 (0324)
 
 db = pymysql.connect(user = 'root', host = 'localhost', passwd='root', port=3306, db='django')
 

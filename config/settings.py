@@ -71,7 +71,25 @@ SYSTEM_APPS = [
     
 ]
 
-INSTALLED_APPS = SYSTEM_APPS + THIRD_PARTY_APPS + CUSTOM_APPS #
+INSTALLED_APPS = [ 
+    SYSTEM_APPS + THIRD_PARTY_APPS + CUSTOM_APPS #
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    ######### 프론트추가
+    'tempApp',  # APP 이름
+    'corsheaders',  # CORS 추가 
+#https://oliopasta.tistory.com/11
+]
+
+# CORS 추가
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8000', 'http://localhost:3000')
+CORS_ALLOW_CREDENTIALS = True
+#프론트추가 
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -79,6 +97,10 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    # 프론트추가
+    'corsheaders.middleware.CorsMiddleware'
+    'django.middleware.common.CommonMiddleware'
+    ####
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -124,14 +146,14 @@ DATABASES = {
 }
 
 # ElasticSearch
-from elasticsearch_dsl import connections
 ELASTICSEARCH_DSL = {
     'default': {
-        'HOSTS': 'localhost:9200',
+        'hosts': 'localhost:9200'
     },
 }
 
-connections.create_connection(hosts=['localhost'])
+INDEX_NAME = 'my_index'
+
 # 해당 함수를 호출하여 엘라스틱 서치 클라이언트 구성 정보를 가지고 인스턴스를 구성한다.
 
 # Password validation
@@ -179,3 +201,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "users.User"
 # 기본 user를 사용하지 않고 커스텀 user model을 사용한다는것을 django framework에 전달
+
+
+# 프론트
+
+

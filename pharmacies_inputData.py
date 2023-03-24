@@ -2,7 +2,7 @@ import pandas as pd
 import pymysql
 from sqlalchemy import create_engine
 
-df = pd.read_csv('D:/db/phamacies_noCreatedupdated.csv', index_col=0)#,encoding='cp949' 
+df = pd.read_csv('C:/Users/Playdata/Desktop/data/phamacies.csv', index_col=0)#,encoding='cp949' 
 
 db = pymysql.connect(user = 'root', host = 'localhost', passwd='root', port=3306, db='django')
 cursor = db.cursor()
